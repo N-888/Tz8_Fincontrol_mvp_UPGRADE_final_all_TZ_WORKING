@@ -1,0 +1,86 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <!-- Указываем кодировку документа. -->
+    <meta charset="UTF-8">
+
+    <!-- Настраиваем адаптивность под мобильные экраны. -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Выводим заголовок страницы. -->
+    <title>{% block title %}FinControl{% endblock %}</title>
+
+    <!-- Подключаем Bootstrap 5 из CDN. -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Подключаем Bootstrap Icons. -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+
+    <!-- Подключаем пользовательские стили проекта. -->
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+    <!-- Начинаем верхнюю панель сайта. -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark py-3">
+        <div class="container">
+            <!-- Выводим логотип и название сервиса. -->
+            <a class="navbar-brand fw-bold" href="{% url 'dashboard' %}">
+                <i class="bi bi-pie-chart-fill me-2"></i>FinControl
+            </a>
+
+            <!-- Кнопка сворачивания меню на маленьких экранах. -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <!-- Основное меню навигации. -->
+            <div class="collapse navbar-collapse" id="mainNavbar">
+                {% if request.user.is_authenticated %}
+                    <!-- Ссылки для авторизованного пользователя. -->
+                    <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-2">
+                        <li class="nav-item"><a class="nav-link" href="{% url 'dashboard' %}">Аналитика</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'transaction_list' %}">Операции</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'category_list' %}">Категории</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'saved_report_list' %}">Избранные отчёты</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'profile' %}">Профиль</a></li>
+                        <li class="nav-item">
+                            <form action="{% url 'logout' %}" method="post" class="d-inline">
+                                {% csrf_token %}
+                                <button class="btn btn-outline-light btn-sm">Выйти</button>
+                            </form>
+                        </li>
+                    </ul>
+                {% else %}
+                    <!-- Ссылки для гостя. -->
+                    <div class="ms-auto d-flex gap-2">
+                        <a class="btn btn-outline-light btn-sm" href="{% url 'login' %}">Войти</a>
+                        <a class="btn btn-light btn-sm" href="{% url 'register' %}">Регистрация</a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <!-- Основная часть страницы. -->
+    <main class="container py-4 py-lg-5">
+        <!-- Выводим flash-сообщения Django. -->
+        {% if messages %}
+            <div class="mb-4">
+                {% for message in messages %}
+                    <div class="alert alert-success shadow-sm">{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <!-- Вставляем содержимое конкретной страницы. -->
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Подключаем Bootstrap JS Bundle. -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Подключаем пользовательский JavaScript. -->
+    <script src="{% static 'js/app.js' %}"></script>
+</body>
+</html>

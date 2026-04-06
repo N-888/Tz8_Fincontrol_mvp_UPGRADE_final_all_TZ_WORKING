@@ -1,0 +1,99 @@
+/* Подключаем базовые визуальные улучшения для современного вида интерфейса. */
+:root {
+    /* Задаём основные цвета проекта. */
+    --fc-bg: #f6f8fc;
+    --fc-card: #ffffff;
+    --fc-text: #1f2937;
+    --fc-muted: #6b7280;
+    --fc-primary: #4f46e5;
+    --fc-success: #10b981;
+    --fc-danger: #ef4444;
+    --fc-warning: #f59e0b;
+    --fc-border: #e5e7eb;
+}
+
+/* Оформляем фон всей страницы. */
+body {
+    background: linear-gradient(180deg, #f8faff 0%, #eef3ff 100%);
+    color: var(--fc-text);
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Делаем шапку более аккуратной и современной. */
+.navbar {
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8px 30px rgba(79, 70, 229, 0.08);
+}
+
+/* Оформляем карточки статистики и форм. */
+.fc-card {
+    background: var(--fc-card);
+    border: 1px solid rgba(229, 231, 235, 0.7);
+    border-radius: 22px;
+    box-shadow: 0 16px 40px rgba(15, 23, 42, 0.06);
+}
+
+/* Делаем число в статистике выразительным. */
+.fc-stat-value {
+    font-size: 1.75rem;
+    font-weight: 700;
+}
+
+/* Подкрашиваем разные виды статистики. */
+.fc-income {
+    color: var(--fc-success);
+}
+
+.fc-expense {
+    color: var(--fc-danger);
+}
+
+.fc-balance {
+    color: var(--fc-primary);
+}
+
+/* Оформляем крупные бейджи периодов. */
+.fc-badge {
+    border-radius: 999px;
+    padding: 0.5rem 0.85rem;
+    font-weight: 600;
+}
+
+/* Улучшаем таблицы. */
+.table thead th {
+    font-size: 0.9rem;
+    color: var(--fc-muted);
+    border-bottom: 1px solid var(--fc-border);
+}
+
+/* Оформляем блок с Telegram-кодом. */
+.fc-code-box {
+    font-family: Consolas, monospace;
+    font-size: 1.2rem;
+    background: #0f172a;
+    color: #ffffff;
+    border-radius: 16px;
+    padding: 1rem;
+    letter-spacing: 0.1rem;
+}
+
+/* Делаем изображения графиков аккуратными. */
+.fc-chart {
+    width: 100%;
+    border-radius: 18px;
+    background: #ffffff;
+    padding: 0.5rem;
+}
+
+/* Добавляем аккуратный hover для кнопок. */
+.btn {
+    border-radius: 14px;
+    font-weight: 600;
+}
+
+/* Делаем адаптивную сетку приятнее на мобильных экранах. */
+@media (max-width: 768px) {
+    .fc-stat-value {
+        font-size: 1.4rem;
+    }
+}

@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+{% block title %}Профиль | FinControl{% endblock %}
+{% block content %}
+<!-- Заголовок профиля. -->
+<div class="mb-4">
+    <h1 class="h2 fw-bold mb-1">Личный кабинет</h1>
+    <p class="text-secondary mb-0">Настройте лимиты, уведомления и привязку Telegram.</p>
+</div>
+
+<!-- Основная сетка профиля. -->
+<div class="row g-4">
+    <div class="col-lg-7">
+        <div class="fc-card p-4 p-lg-5 h-100">
+            <h2 class="h4 fw-bold mb-4">Настройки пользователя</h2>
+
+            <!-- Форма настроек профиля. -->
+            <form method="post">
+                {% csrf_token %}
+                {% for field in form %}
+                    <div class="mb-3">
+                        {% if field.field.widget.input_type == 'checkbox' %}
+                            <div class="form-check">
+                                {{ field }}
+                                <label class="form-check-label">{{ field.label }}</label>
+                            </div>
+                        {% else %}
+                            <label class="form-label">{{ field.label }}</label>
+                            {{ field }}
+                        {% endif %}
+                        {% if field.errors %}
+                            <div class="text-danger small mt-1">{{ field.errors|join:', ' }}</div>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+                <button type="submit" class="btn btn-primary">Сохранить настройки</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="col-lg-5">
+        <div class="fc-card p-4 p-lg-5 h-100">
+            <h2 class="h4 fw-bold mb-3">Привязка Telegram</h2>
+            <p class="text-secondary">Откройте своего бота и отправьте команду с этим кодом:</p>
+
+            <!-- Выводим код привязки Telegram. -->
+            <div class="fc-code-box mb-3">{{ profile.telegram_link_code }}</div>
+
+            <!-- Показываем статус привязки. -->
+            <div class="mb-3">
+                {% if profile.telegram_id %}
+                    <span class="badge text-bg-success">Telegram подключён</span>
+                    <div class="small text-secondary mt-2">Telegram ID: {{ profile.telegram_id }}</div>
+                {% else %}
+                    <span class="badge text-bg-secondary">Telegram пока не подключён</span>
+                    <div class="small text-secondary mt-2">Если вы уже отправили команду боту, эта страница сама обновится через несколько секунд.</div>
+                {% endif %}
+            </div>
+
+            <!-- Форма обновления кода. -->
+            <form method="post">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="regenerate_code">
+                <button type="submit" class="btn btn-outline-dark">Сгенерировать новый код</button>
+            </form>
+
+            <hr class="my-4">
+
+            <!-- Показываем краткую инструкцию. -->
+            <div class="small text-secondary">
+                1. Скопируйте код выше.<br>
+                2. Откройте Telegram-бота.<br>
+                3. Отправьте команду: <strong>/link КОД</strong>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+{% if not profile.telegram_id %}
+<script>
+    // Обновляем страницу через несколько секунд, чтобы пользователь сразу увидел успешную привязку Telegram.
+    setTimeout(function () {
+        window.location.reload();
+    }, 5000);
+</script>
+{% endif %}

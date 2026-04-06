@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% block title %}Вход | FinControl{% endblock %}
+{% block content %}
+<!-- Создаём адаптивный контейнер входа. -->
+<div class="row justify-content-center">
+    <div class="col-lg-5">
+        <!-- Карточка формы входа. -->
+        <div class="fc-card p-4 p-lg-5">
+            <div class="mb-4 text-center">
+                <h1 class="h3 fw-bold mb-2">Вход в FinControl</h1>
+                <p class="text-secondary mb-0">Управляйте финансами из кабинета и Telegram.</p>
+            </div>
+
+            <!-- Форма входа пользователя. -->
+            <form method="post">
+                {% csrf_token %}
+
+                <!-- Поле логина. -->
+                <div class="mb-3">
+                    <label class="form-label">Имя пользователя</label>
+                    <input type="text" name="username" class="form-control" required>
+                </div>
+
+                <!-- Поле пароля. -->
+                <div class="mb-3">
+                    <label class="form-label">Пароль</label>
+                    <input type="password" name="password" class="form-control" required>
+                </div>
+
+                <!-- Кнопка входа. -->
+                <button type="submit" class="btn btn-primary w-100">Войти</button>
+            </form>
+
+            <!-- Ссылка на регистрацию. -->
+            <div class="text-center mt-4">
+                <span class="text-secondary">Ещё нет аккаунта?</span>
+                <a href="{% url 'register' %}" class="text-decoration-none fw-semibold">Создать аккаунт</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

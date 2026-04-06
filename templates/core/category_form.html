@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% block title %}{{ title }} | FinControl{% endblock %}
+{% block content %}
+<!-- Обёртка формы категории. -->
+<div class="row justify-content-center">
+    <div class="col-lg-6">
+        <div class="fc-card p-4 p-lg-5">
+            <h1 class="h3 fw-bold mb-4">{{ title }}</h1>
+
+            <!-- Форма категории. -->
+            <form method="post">
+                {% csrf_token %}
+
+                <!-- Проходим по всем полям формы. -->
+                {% for field in form %}
+                    <div class="mb-3">
+                        {% if field.name == 'is_active' %}
+                            <div class="form-check">
+                                {{ field }}
+                                <label class="form-check-label">{{ field.label }}</label>
+                            </div>
+                        {% else %}
+                            <label class="form-label">{{ field.label }}</label>
+                            {{ field }}
+                        {% endif %}
+                        {% if field.errors %}
+                            <div class="text-danger small mt-1">{{ field.errors|join:', ' }}</div>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+
+                <!-- Кнопки управления. -->
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-primary">Сохранить</button>
+                    <a href="{% url 'category_list' %}" class="btn btn-outline-secondary">Отмена</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

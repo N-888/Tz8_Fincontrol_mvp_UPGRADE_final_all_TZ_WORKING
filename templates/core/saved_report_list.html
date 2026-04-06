@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% block title %}Избранные отчёты | FinControl{% endblock %}
+{% block content %}
+<!-- Верхний заголовок страницы. -->
+<div class="mb-4">
+    <h1 class="h2 fw-bold mb-1">Избранные отчёты</h1>
+    <p class="text-secondary mb-0">Сохраняйте часто используемые наборы фильтров для быстрого доступа.</p>
+</div>
+
+<!-- Форма сохранения нового отчёта. -->
+<div class="fc-card p-4 mb-4">
+    <h2 class="h5 fw-bold mb-3">Сохранить новый отчёт</h2>
+    <form method="post" class="row g-3">
+        {% csrf_token %}
+        <div class="col-md-3">
+            <label class="form-label">Название</label>
+            {{ form.name }}
+        </div>
+        <div class="col-md-2">
+            <label class="form-label">Период</label>
+            {{ form.period }}
+        </div>
+        <div class="col-md-2">
+            <label class="form-label">Дата начала</label>
+            {{ form.start_date }}
+        </div>
+        <div class="col-md-2">
+            <label class="form-label">Дата конца</label>
+            {{ form.end_date }}
+        </div>
+        <div class="col-md-3">
+            <label class="form-label">Категория</label>
+            {{ form.category }}
+        </div>
+        <div class="col-12">
+            <button type="submit" class="btn btn-primary">Сохранить отчёт</button>
+        </div>
+    </form>
+</div>
+
+<!-- Список сохранённых отчётов. -->
+<div class="row g-4">
+    {% for report in reports %}
+        <div class="col-md-6 col-xl-4">
+            <div class="fc-card p-4 h-100">
+                <h2 class="h5 fw-bold">{{ report.name }}</h2>
+                <p class="text-secondary mb-2">Период: {{ report.get_period_display }}</p>
+                <p class="text-secondary mb-2">Категория: {% if report.category %}{{ report.category.icon }} {{ report.category.name }}{% else %}Все{% endif %}</p>
+                <p class="text-secondary mb-4">Сохранён: {{ report.created_at|date:'d.m.Y H:i' }}</p>
+                <div class="d-flex gap-2 flex-wrap">
+                    <a href="{% url 'dashboard' %}?period={{ report.period }}{% if report.start_date %}&start_date={{ report.start_date|date:'Y-m-d' }}{% endif %}{% if report.end_date %}&end_date={{ report.end_date|date:'Y-m-d' }}{% endif %}{% if report.category %}&category={{ report.category.id }}{% endif %}" class="btn btn-sm btn-outline-primary">Открыть</a>
+                    <a href="{% url 'saved_report_delete' report.pk %}" class="btn btn-sm btn-outline-danger">Удалить</a>
+                </div>
+            </div>
+        </div>
+    {% empty %}
+        <div class="col-12">
+            <div class="fc-card p-4 text-center text-secondary">Сохранённых отчётов пока нет.</div>
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}

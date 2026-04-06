@@ -1,0 +1,158 @@
+{% extends 'base.html' %}
+{% block title %}Аналитика | FinControl{% endblock %}
+{% block content %}
+<!-- Верхний заголовок страницы. -->
+<div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3 mb-4">
+    <div>
+        <h1 class="h2 fw-bold mb-1">Финансовая аналитика</h1>
+        <p class="text-secondary mb-0">Наглядная сводка, рекомендации и контроль расходов.</p>
+    </div>
+    <div class="d-flex gap-2 flex-wrap">
+        <a href="{% url 'transaction_create' %}" class="btn btn-primary"><i class="bi bi-plus-circle me-2"></i>Добавить операцию</a>
+        <a href="{% url 'saved_report_list' %}" class="btn btn-outline-dark"><i class="bi bi-star me-2"></i>Избранные отчёты</a>
+    </div>
+</div>
+
+<!-- Фильтр аналитики. -->
+<div class="fc-card p-4 mb-4">
+    <form method="get" class="row g-3">
+        <div class="col-md-3">
+            <label class="form-label">Период</label>
+            <select name="period" class="form-select">
+                <option value="day" {% if period == 'day' %}selected{% endif %}>День</option>
+                <option value="week" {% if period == 'week' %}selected{% endif %}>Неделя</option>
+                <option value="month" {% if period == 'month' %}selected{% endif %}>Месяц</option>
+                <option value="year" {% if period == 'year' %}selected{% endif %}>Год</option>
+                <option value="custom" {% if period == 'custom' %}selected{% endif %}>Произвольный период</option>
+            </select>
+        </div>
+        <div class="col-md-3">
+            <label class="form-label">Дата начала</label>
+            <input type="date" name="start_date" class="form-control" value="{{ start_date|date:'Y-m-d' }}">
+        </div>
+        <div class="col-md-3">
+            <label class="form-label">Дата конца</label>
+            <input type="date" name="end_date" class="form-control" value="{{ end_date|date:'Y-m-d' }}">
+        </div>
+        <div class="col-md-3">
+            <label class="form-label">Категория</label>
+            <select name="category" class="form-select">
+                <option value="">Все категории</option>
+                {% for category in categories %}
+                    <option value="{{ category.id }}" {% if selected_category_id|stringformat:'s' == category.id|stringformat:'s' %}selected{% endif %}>
+                        {{ category.icon }} {{ category.name }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-12 d-flex gap-2 flex-wrap">
+            <button type="submit" class="btn btn-dark"><i class="bi bi-funnel me-2"></i>Применить фильтр</button>
+            <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary">Сбросить</a>
+        </div>
+    </form>
+</div>
+
+<!-- Карточки основных метрик. -->
+<div class="row g-4 mb-4">
+    <div class="col-md-4">
+        <div class="fc-card p-4 h-100">
+            <div class="text-secondary mb-2">Доходы</div>
+            <div class="fc-stat-value fc-income">{{ summary.income_sum }} ₽</div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="fc-card p-4 h-100">
+            <div class="text-secondary mb-2">Расходы</div>
+            <div class="fc-stat-value fc-expense">{{ summary.expense_sum }} ₽</div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="fc-card p-4 h-100">
+            <div class="text-secondary mb-2">Баланс</div>
+            <div class="fc-stat-value fc-balance">{{ summary.balance }} ₽</div>
+        </div>
+    </div>
+</div>
+
+<!-- Графики аналитики. -->
+<div class="row g-4 mb-4">
+    <div class="col-lg-7">
+        <div class="fc-card p-4 h-100">
+            <h2 class="h5 fw-bold mb-3">Динамика по времени</h2>
+            <img class="fc-chart" src="data:image/png;base64,{{ line_chart }}" alt="График доходов и расходов">
+        </div>
+    </div>
+    <div class="col-lg-5">
+        <div class="fc-card p-4 h-100">
+            <h2 class="h5 fw-bold mb-3">Структура расходов</h2>
+            <img class="fc-chart" src="data:image/png;base64,{{ pie_chart }}" alt="Диаграмма категорий">
+        </div>
+    </div>
+</div>
+
+<!-- Блок рекомендаций и аномалий. -->
+<div class="row g-4 mb-4">
+    <div class="col-lg-6">
+        <div class="fc-card p-4 h-100">
+            <h2 class="h5 fw-bold mb-3"><i class="bi bi-lightbulb me-2 text-warning"></i>Рекомендации</h2>
+            {% if advice_list %}
+                <div class="d-grid gap-2">
+                    {% for advice in advice_list %}
+                        <div class="alert alert-light border mb-0">{{ advice }}</div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="text-secondary mb-0">Советов пока нет.</p>
+            {% endif %}
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="fc-card p-4 h-100">
+            <h2 class="h5 fw-bold mb-3"><i class="bi bi-exclamation-triangle me-2 text-danger"></i>Аномалии</h2>
+            {% if anomaly_list %}
+                <div class="d-grid gap-2">
+                    {% for anomaly in anomaly_list %}
+                        <div class="alert alert-warning mb-0">
+                            <div class="fw-semibold">{{ anomaly.title }}</div>
+                            <div class="small">{{ anomaly.details }}</div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="text-secondary mb-0">Подозрительных всплесков расходов не найдено.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Быстрая форма сохранения отчёта. -->
+<div class="fc-card p-4">
+    <h2 class="h5 fw-bold mb-3"><i class="bi bi-bookmark-star me-2"></i>Сохранить текущий отчёт</h2>
+    <form method="post" action="{% url 'saved_report_list' %}" class="row g-3">
+        {% csrf_token %}
+        <div class="col-md-3">
+            <label class="form-label">Название</label>
+            {{ saved_report_form.name }}
+        </div>
+        <div class="col-md-2">
+            <label class="form-label">Период</label>
+            {{ saved_report_form.period }}
+        </div>
+        <div class="col-md-2">
+            <label class="form-label">Дата начала</label>
+            {{ saved_report_form.start_date }}
+        </div>
+        <div class="col-md-2">
+            <label class="form-label">Дата конца</label>
+            {{ saved_report_form.end_date }}
+        </div>
+        <div class="col-md-3">
+            <label class="form-label">Категория</label>
+            {{ saved_report_form.category }}
+        </div>
+        <div class="col-12">
+            <button type="submit" class="btn btn-outline-primary">Сохранить в избранное</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

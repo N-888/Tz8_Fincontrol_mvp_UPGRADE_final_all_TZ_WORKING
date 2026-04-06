@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block title %}Подтверждение удаления | FinControl{% endblock %}
+{% block content %}
+<!-- Универсальная карточка подтверждения удаления. -->
+<div class="row justify-content-center">
+    <div class="col-lg-6">
+        <div class="fc-card p-4 p-lg-5">
+            <h1 class="h3 fw-bold mb-3">{{ title }}</h1>
+            <p class="text-secondary mb-4">Вы действительно хотите удалить объект: <strong>{{ object_name }}</strong>?</p>
+
+            <!-- Форма подтверждения удаления. -->
+            <form method="post" class="d-flex gap-2">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger">Да, удалить</button>
+                <a href="javascript:history.back()" class="btn btn-outline-secondary">Отмена</a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

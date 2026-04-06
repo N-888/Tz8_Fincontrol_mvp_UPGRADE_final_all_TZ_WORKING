@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% block title %}Регистрация | FinControl{% endblock %}
+{% block content %}
+<!-- Создаём адаптивный контейнер регистрации. -->
+<div class="row justify-content-center">
+    <div class="col-lg-6">
+        <!-- Карточка формы регистрации. -->
+        <div class="fc-card p-4 p-lg-5">
+            <div class="mb-4 text-center">
+                <h1 class="h3 fw-bold mb-2">Регистрация</h1>
+                <p class="text-secondary mb-0">Создайте аккаунт и начните вести личный бюджет.</p>
+            </div>
+
+            <!-- Форма регистрации. -->
+            <form method="post">
+                {% csrf_token %}
+
+                <!-- Проходим по всем полям формы. -->
+                {% for field in form %}
+                    <div class="mb-3">
+                        <label class="form-label">{{ field.label }}</label>
+                        {{ field }}
+                        {% if field.errors %}
+                            <div class="text-danger small mt-1">{{ field.errors|join:', ' }}</div>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+
+                <!-- Кнопка отправки формы. -->
+                <button type="submit" class="btn btn-primary w-100">Создать аккаунт</button>
+            </form>
+
+            <!-- Ссылка на вход. -->
+            <div class="text-center mt-4">
+                <span class="text-secondary">Уже есть аккаунт?</span>
+                <a href="{% url 'login' %}" class="text-decoration-none fw-semibold">Войти</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
