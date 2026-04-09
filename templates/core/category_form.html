@@ -1,17 +1,16 @@
 {% extends 'base.html' %}
 {% block title %}{{ title }} | FinControl{% endblock %}
 {% block content %}
-<!-- Обёртка формы категории. -->
 <div class="row justify-content-center">
     <div class="col-lg-6">
         <div class="fc-card p-4 p-lg-5">
             <h1 class="h3 fw-bold mb-4">{{ title }}</h1>
-
-            <!-- Форма категории. -->
+            <div class="alert alert-light border mb-4">
+                Если поле «Родительская категория» оставить пустым, будет создана обычная категория.<br>
+                Если выбрать родителя, будет создана подкатегория внутри выбранной категории.
+            </div>
             <form method="post">
                 {% csrf_token %}
-
-                <!-- Проходим по всем полям формы. -->
                 {% for field in form %}
                     <div class="mb-3">
                         {% if field.name == 'is_active' %}
@@ -28,8 +27,6 @@
                         {% endif %}
                     </div>
                 {% endfor %}
-
-                <!-- Кнопки управления. -->
                 <div class="d-flex gap-2">
                     <button type="submit" class="btn btn-primary">Сохранить</button>
                     <a href="{% url 'category_list' %}" class="btn btn-outline-secondary">Отмена</a>

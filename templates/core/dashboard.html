@@ -1,7 +1,6 @@
 {% extends 'base.html' %}
 {% block title %}Аналитика | FinControl{% endblock %}
 {% block content %}
-<!-- Верхний заголовок страницы. -->
 <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3 mb-4">
     <div>
         <h1 class="h2 fw-bold mb-1">Финансовая аналитика</h1>
@@ -10,10 +9,11 @@
     <div class="d-flex gap-2 flex-wrap">
         <a href="{% url 'transaction_create' %}" class="btn btn-primary"><i class="bi bi-plus-circle me-2"></i>Добавить операцию</a>
         <a href="{% url 'saved_report_list' %}" class="btn btn-outline-dark"><i class="bi bi-star me-2"></i>Избранные отчёты</a>
+        <a href="{% url 'export_report_excel' %}?{{ request.GET.urlencode }}" class="btn btn-outline-success"><i class="bi bi-file-earmark-excel me-2"></i>Excel</a>
+        <a href="{% url 'export_report_pdf' %}?{{ request.GET.urlencode }}" class="btn btn-outline-danger"><i class="bi bi-file-earmark-pdf me-2"></i>PDF</a>
     </div>
 </div>
 
-<!-- Фильтр аналитики. -->
 <div class="fc-card p-4 mb-4">
     <form method="get" class="row g-3">
         <div class="col-md-3">
@@ -40,7 +40,7 @@
                 <option value="">Все категории</option>
                 {% for category in categories %}
                     <option value="{{ category.id }}" {% if selected_category_id|stringformat:'s' == category.id|stringformat:'s' %}selected{% endif %}>
-                        {{ category.icon }} {{ category.name }}
+                        {{ category.icon }} {{ category.full_name }}
                     </option>
                 {% endfor %}
             </select>
@@ -52,45 +52,42 @@
     </form>
 </div>
 
-<!-- Карточки основных метрик. -->
 <div class="row g-4 mb-4">
     <div class="col-md-4">
         <div class="fc-card p-4 h-100">
             <div class="text-secondary mb-2">Доходы</div>
-            <div class="fc-stat-value fc-income">{{ summary.income_sum }} ₽</div>
+            <div class="fc-stat-value fc-income">{{ summary.income_sum|floatformat:2 }} ₽</div>
         </div>
     </div>
     <div class="col-md-4">
         <div class="fc-card p-4 h-100">
             <div class="text-secondary mb-2">Расходы</div>
-            <div class="fc-stat-value fc-expense">{{ summary.expense_sum }} ₽</div>
+            <div class="fc-stat-value fc-expense">{{ summary.expense_sum|floatformat:2 }} ₽</div>
         </div>
     </div>
     <div class="col-md-4">
         <div class="fc-card p-4 h-100">
             <div class="text-secondary mb-2">Баланс</div>
-            <div class="fc-stat-value fc-balance">{{ summary.balance }} ₽</div>
+            <div class="fc-stat-value fc-balance">{{ summary.balance|floatformat:2 }} ₽</div>
         </div>
     </div>
 </div>
 
-<!-- Графики аналитики. -->
 <div class="row g-4 mb-4">
     <div class="col-lg-7">
         <div class="fc-card p-4 h-100">
             <h2 class="h5 fw-bold mb-3">Динамика по времени</h2>
-            <img class="fc-chart" src="data:image/png;base64,{{ line_chart }}" alt="График доходов и расходов">
+            <img class="fc-chart img-fluid w-100" src="data:image/png;base64,{{ line_chart }}" alt="График доходов и расходов">
         </div>
     </div>
     <div class="col-lg-5">
         <div class="fc-card p-4 h-100">
             <h2 class="h5 fw-bold mb-3">Структура расходов</h2>
-            <img class="fc-chart" src="data:image/png;base64,{{ pie_chart }}" alt="Диаграмма категорий">
+            <img class="fc-chart img-fluid w-100" src="data:image/png;base64,{{ pie_chart }}" alt="Диаграмма категорий">
         </div>
     </div>
 </div>
 
-<!-- Блок рекомендаций и аномалий. -->
 <div class="row g-4 mb-4">
     <div class="col-lg-6">
         <div class="fc-card p-4 h-100">
@@ -125,7 +122,6 @@
     </div>
 </div>
 
-<!-- Быстрая форма сохранения отчёта. -->
 <div class="fc-card p-4">
     <h2 class="h5 fw-bold mb-3"><i class="bi bi-bookmark-star me-2"></i>Сохранить текущий отчёт</h2>
     <form method="post" action="{% url 'saved_report_list' %}" class="row g-3">

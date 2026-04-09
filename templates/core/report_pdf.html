@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>FinControl PDF Report</title>
+
+    <style>
+        @font-face {
+            font-family: "PdfArial";
+            src: url("file:///C:/Windows/Fonts/arial.ttf");
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        @font-face {
+            font-family: "PdfArial";
+            src: url("file:///C:/Windows/Fonts/arialbd.ttf");
+            font-weight: bold;
+            font-style: normal;
+        }
+
+        @page {
+            size: A4;
+            margin: 1.2cm;
+        }
+
+        body {
+            font-family: "PdfArial";
+            font-size: 12px;
+            color: #222222;
+        }
+
+        h1, h2, p, div, span, table, th, td {
+            font-family: "PdfArial";
+        }
+
+        h1 {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 12px;
+        }
+
+        h2 {
+            font-size: 15px;
+            font-weight: bold;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            table-layout: fixed;
+        }
+
+        th, td {
+            border: 1px solid #cccccc;
+            padding: 6px;
+            vertical-align: top;
+            word-wrap: break-word;
+        }
+
+        th {
+            background: #f3f3f3;
+            font-weight: bold;
+        }
+
+        .muted {
+            color: #666666;
+        }
+    </style>
+</head>
+<body>
+    <h1>FinControl — финансовый отчёт</h1>
+
+    <p class="muted">Период: {{ period }}</p>
+    <p class="muted">Сформировано: {{ generated_at|date:"Y-m-d H:i" }}</p>
+
+    <h2>Итоги</h2>
+    <table>
+        <tr>
+            <th>Доходы</th>
+            <th>Расходы</th>
+            <th>Баланс</th>
+        </tr>
+        <tr>
+            <td>{{ summary.income_sum|floatformat:2 }} руб.</td>
+            <td>{{ summary.expense_sum|floatformat:2 }} руб.</td>
+            <td>{{ summary.balance|floatformat:2 }} руб.</td>
+        </tr>
+    </table>
+
+    <h2>Операции</h2>
+    <table>
+        <tr>
+            <th>Дата</th>
+            <th>Тип</th>
+            <th>Категория</th>
+            <th>Сумма</th>
+            <th>Описание</th>
+        </tr>
+        {% for item in transactions %}
+        <tr>
+            <td>{{ item.operation_date|date:"Y-m-d" }}</td>
+            <td>{{ item.get_transaction_type_display }}</td>
+            <td>{{ item.category.full_name }}</td>
+            <td>{{ item.amount|floatformat:2 }} руб.</td>
+            <td>{{ item.description }}</td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="5">Операций по выбранному периоду нет.</td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>
