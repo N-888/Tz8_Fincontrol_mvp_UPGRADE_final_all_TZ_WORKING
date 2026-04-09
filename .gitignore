@@ -1,1 +1,9 @@
+@"
+.venv/
 .idea/
+__pycache__/
+.env
+db.sqlite3
+*.log
+"@ | Add-Content .gitignore
+
